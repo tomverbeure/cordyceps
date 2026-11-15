@@ -76,6 +76,6 @@ target_compile_definitions(cordyceps PRIVATE
 pico_add_extra_outputs(cordyceps)
 pico_enable_stdio_usb(cordyceps 1)
 
-# Currently explicitly disable UART because it's not clear to which GPIO pins it's connected.
+# stdio printf etc should never go to a UART.
 pico_enable_stdio_uart(cordyceps 0)
 

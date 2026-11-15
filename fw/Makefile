@@ -1,10 +1,10 @@
 
 PICOTOOL = ./build/_deps/picotool/picotool
 
-all: flash
-
 compile:
 	cd build && make -j 8
+
+all: flash
 
 flash: compile
 	$(PICOTOOL) load -v -x build/cordyceps.uf2 -f --vid 0
