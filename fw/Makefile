@@ -11,4 +11,7 @@ flash: compile
 
 # Only works when plugged into the second USB port of my Mac
 terminal:
+	picocom --echo --baud 38400  /dev/cu.usbmodem1103
+
+terminal2:
 	picocom --echo --baud 38400  /dev/cu.usbmodem1101

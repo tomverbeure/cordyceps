@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <string.h>
+
 #include "pico/stdlib.h"
+#include "tusb.h"
 
 #include "pins.h"
 
@@ -9,6 +11,8 @@
 #define VXW_UART_TX_PIN     VXW_RXD
 #define VXW_UART_RX_PIN     VXW_TXD
 
+#define SCPI_USB_ID         0
+#define VXW_USB_ID          1
 
 void vxw_uart_init()
 {
@@ -36,7 +40,7 @@ void bdm_pulse_hreset()
 
 int main(void)
 {
-    stdio_usb_init();
+    tusb_init(0);
     vxw_uart_init();
     bdm_init();
 
@@ -46,8 +50,11 @@ int main(void)
 
     // An endless loop is needed otherwise USB reset won't be serviced.
     while(true){
-        int c = getchar_timeout_us(0);
-        if (c != PICO_ERROR_TIMEOUT){
+        tud_task();
+
+        // VXW commands
+        if (tud_cdc_n_available(VXW_USB_ID)){
+            uint8_t c = tud_cdc_n_read_char(VXW_USB_ID);
             switch(c){
                 case 'r': {
                     bdm_pulse_hreset();
@@ -56,9 +63,22 @@ int main(void)
             }
         }
 
-        while(uart_is_readable(VXW_UART_ID)){
+        // VXW UART to USB
+        int pending = 0;
+        while(uart_is_readable(VXW_UART_ID) && tud_cdc_n_write_available(VXW_USB_ID)){
             uint8_t ch = uart_getc(VXW_UART_ID);
-            printf("%c", ch);
+            tud_cdc_n_write_char(VXW_USB_ID, ch);
+            ++pending;
+        }
+        if (pending){
+            tud_cdc_n_write_flush(VXW_USB_ID);
+        }
+
+        // SCPI USB loopback
+        if (tud_cdc_n_available(SCPI_USB_ID)){
+            uint8_t ch = tud_cdc_n_read_char(SCPI_USB_ID);
+            tud_cdc_n_write_char(SCPI_USB_ID, ch);
+            tud_cdc_n_write_flush(SCPI_USB_ID);
         }
     }
 }

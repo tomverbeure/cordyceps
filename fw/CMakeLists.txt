@@ -42,7 +42,7 @@ add_dependencies(picotool cordyceps_picotool)
 # Register our picotool before SDK initialization can look for an installed one.
 pico_sdk_init()
 
-add_executable(cordyceps main.c)
+add_executable(cordyceps main.c tusb_descriptors.c)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -51,8 +51,10 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 target_link_libraries(cordyceps 
             pico_stdlib 
+            tinyusb_device
             pico_usb_reset 
-            pico_unique_id)
+            pico_unique_id
+            )
 
 target_compile_definitions(cordyceps PRIVATE
     # Add dedicated USB interface to reset the device in BOOTSEL mode
@@ -67,14 +69,14 @@ target_compile_definitions(cordyceps PRIVATE
     # USB reset interface without a custom Windows driver
     PICO_USB_RESET_SUPPORT_MS_OS_20_DESCRIPTOR=1
 
-    # Depends on the total number of interfaces
-    # If there is 1 CDC only, then that counts for 2 interfaces: CDC control (intfc 0) and CDC data (intfc 1).
-    # The USB reset interface is then assigned to interface 2.
-    PICO_USB_RESET_MS_OS_20_DESCRIPTOR_ITF=2
+    # Two CDC ports occupy interfaces 0-3; the reset interface is interface 4.
+    PICO_USB_RESET_MS_OS_20_DESCRIPTOR_ITF=4
 )
 
 pico_add_extra_outputs(cordyceps)
-pico_enable_stdio_usb(cordyceps 1)
+
+# Can't use stdio for USB when you have more than 1 USB CDC-ACM interface.
+pico_enable_stdio_usb(cordyceps 0)
 
 # stdio printf etc should never go to a UART.
 pico_enable_stdio_uart(cordyceps 0)
