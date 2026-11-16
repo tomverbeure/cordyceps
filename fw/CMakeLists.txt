@@ -46,6 +46,7 @@ add_executable(cordyceps
             main.c
             tusb_descriptors.c
             bdm.c
+            rtc.c
         )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -58,6 +59,8 @@ target_link_libraries(cordyceps
             tinyusb_device
             pico_usb_reset 
             pico_unique_id
+            pico_aon_timer
+            hardware_i2c
             )
 
 target_compile_definitions(cordyceps PRIVATE

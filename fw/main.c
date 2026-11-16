@@ -5,6 +5,7 @@
 #include "tusb.h"
 
 #include "bdm.h"
+#include "rtc.h"
 #include "pins.h"
 
 #define SCPI_USB_ID         0
@@ -45,8 +46,8 @@ int main(void)
     scpi_uart_init();
     vxw_uart_init();
     bdm_init();
+    rtc_init();
 
-    printf("VxWorks terminal active\n");
 
     // An endless loop is needed otherwise USB reset won't be serviced.
     while(true){
@@ -58,6 +59,24 @@ int main(void)
             switch(c){
                 case 'r': {
                     bdm_pulse_hreset();
+                    break;
+                }
+                case 'h': {
+                    const char str[] = "VxWorks terminal active\n";
+                    tud_cdc_n_write(VXW_USB_ID, str, strlen(str));
+                    tud_cdc_n_write_flush(VXW_USB_ID);
+                    break;
+                }
+                case 't': {
+                    bool time_valid;
+                    struct tm rtc_time;
+                    rtc_test(&time_valid, &rtc_time);
+
+                    char buf[64];
+                    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &rtc_time);
+                    tud_cdc_n_write(VXW_USB_ID, buf, strlen(buf));
+                    tud_cdc_n_write_char(VXW_USB_ID, '\n');
+                    tud_cdc_n_write_flush(VXW_USB_ID);
                     break;
                 }
             }
