@@ -4,15 +4,31 @@
 #include "pico/stdlib.h"
 #include "tusb.h"
 
+#include "bdm.h"
 #include "pins.h"
+
+#define SCPI_USB_ID         0
+#define VXW_USB_ID          1
+
+#define SCPI_UART_ID        uart0
+#define SCPI_UART_BAUD_RATE 9600
+#define SCPI_UART_TX_PIN    RXD
+#define SCPI_UART_RX_PIN    TXD
 
 #define VXW_UART_ID         uart1
 #define VXW_UART_BAUD_RATE  38400
 #define VXW_UART_TX_PIN     VXW_RXD
 #define VXW_UART_RX_PIN     VXW_TXD
 
-#define SCPI_USB_ID         0
-#define VXW_USB_ID          1
+
+void scpi_uart_init()
+{
+    uart_init(SCPI_UART_ID, SCPI_UART_BAUD_RATE);
+    gpio_set_function(SCPI_UART_TX_PIN, GPIO_FUNC_UART);
+    gpio_set_function(SCPI_UART_RX_PIN, GPIO_FUNC_UART);
+    uart_set_format(SCPI_UART_ID, 8, 1, UART_PARITY_NONE);
+    uart_set_fifo_enabled(SCPI_UART_ID, true);
+}
 
 void vxw_uart_init()
 {
@@ -23,28 +39,12 @@ void vxw_uart_init()
     uart_set_fifo_enabled(VXW_UART_ID, true);
 }
 
-void bdm_init()
-{
-    gpio_init(BDM_HRESET);
-    gpio_put(BDM_HRESET, 0);
-    gpio_set_dir(BDM_HRESET, GPIO_OUT);
-}
-
-// Pulsing HRESET resets the scope
-void bdm_pulse_hreset()
-{
-    gpio_put(BDM_HRESET, 1);
-    sleep_ms(20);
-    gpio_put(BDM_HRESET, 0);
-}
-
 int main(void)
 {
     tusb_init(0);
+    scpi_uart_init();
     vxw_uart_init();
     bdm_init();
-
-    int secs = 0;
 
     printf("VxWorks terminal active\n");
 
@@ -74,10 +74,19 @@ int main(void)
             tud_cdc_n_write_flush(VXW_USB_ID);
         }
 
-        // SCPI USB loopback
-        if (tud_cdc_n_available(SCPI_USB_ID)){
+        // SCPI UART <> USB
+        if (tud_cdc_n_available(SCPI_USB_ID) && uart_is_writable(SCPI_UART_ID)){
             uint8_t ch = tud_cdc_n_read_char(SCPI_USB_ID);
+            uart_putc(SCPI_UART_ID, ch);
+        }
+
+        pending = 0;
+        if (uart_is_readable(SCPI_UART_ID) && tud_cdc_n_write_available(SCPI_USB_ID)){
+            uint8_t ch = uart_getc(SCPI_UART_ID);
             tud_cdc_n_write_char(SCPI_USB_ID, ch);
+            ++pending;
+        }
+        if (pending){
             tud_cdc_n_write_flush(SCPI_USB_ID);
         }
     }

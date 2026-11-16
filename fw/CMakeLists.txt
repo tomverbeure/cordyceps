@@ -42,7 +42,11 @@ add_dependencies(picotool cordyceps_picotool)
 # Register our picotool before SDK initialization can look for an installed one.
 pico_sdk_init()
 
-add_executable(cordyceps main.c tusb_descriptors.c)
+add_executable(cordyceps
+            main.c
+            tusb_descriptors.c
+            bdm.c
+        )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}
