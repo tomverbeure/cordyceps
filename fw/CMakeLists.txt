@@ -47,6 +47,8 @@ add_executable(cordyceps
             tusb_descriptors.c
             bdm.c
             rtc.c
+            scpi_uart.c
+            ring_buf.c
         )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
