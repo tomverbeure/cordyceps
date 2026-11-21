@@ -43,7 +43,7 @@ One way is by soldering a 10k pulldown resistor on an expansion card. I only lea
 whole serial port business after the PCBs came back, but the resistor was still easy to add
 thanks to the presence of an SNI debug bus. You can see the blue patch wire and resistor here:
 
-![SNI TENA pulldown resistor and patch wire](./docs/sni_tena_pulldown.jpg)
+![SNI TENA pulldown resistor and patch wire](sni_tena_pulldown.jpg)
 
 This worked, but it's not ideal, and I definitely didn't want to spin the board for this.
 
