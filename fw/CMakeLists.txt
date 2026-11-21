@@ -48,6 +48,7 @@ add_executable(cordyceps
             bdm.c
             rtc.c
             scpi_uart.c
+            vxw_uart.c
             ring_buf.c
         )
 

@@ -37,14 +37,14 @@ void scpi_uart_on_uart_irq()
 
 void scpi_uart_init()
 {
+    ring_buf_init(&scpi_rx_ring_buf, scpi_rx_buf, SCPI_UART_RX_BUF_SIZE);
+    ring_buf_init(&scpi_tx_ring_buf, scpi_tx_buf, SCPI_UART_TX_BUF_SIZE);
+
     uart_init(SCPI_UART_ID, SCPI_UART_BAUD_RATE);
     gpio_set_function(SCPI_UART_TX_PIN, GPIO_FUNC_UART);
     gpio_set_function(SCPI_UART_RX_PIN, GPIO_FUNC_UART);
     uart_set_format(SCPI_UART_ID, 8, 1, UART_PARITY_NONE);
     uart_set_fifo_enabled(SCPI_UART_ID, true);
-
-    ring_buf_init(&scpi_rx_ring_buf, scpi_rx_buf, SCPI_UART_RX_BUF_SIZE);
-    ring_buf_init(&scpi_tx_ring_buf, scpi_tx_buf, SCPI_UART_TX_BUF_SIZE);
 
     int scpi_uart_irq = (SCPI_UART_ID == uart0) ? UART0_IRQ : UART1_IRQ;
     irq_set_exclusive_handler(scpi_uart_irq, scpi_uart_on_uart_irq);
@@ -77,10 +77,10 @@ void scpi_uart_process()
 
     // From UART to USB
     int uart_rx_count       = ring_buf_available(&scpi_rx_ring_buf);
-    if (uart_rx_count > 0){
-        int usb_tx_count        = tud_cdc_n_write_available(SCPI_USB_ID);
-        int uart2usb_xfer_count = MIN(MIN(uart_rx_count, usb_tx_count),sizeof(buf));
+    int usb_tx_count        = tud_cdc_n_write_available(SCPI_USB_ID);
+    int uart2usb_xfer_count = MIN(MIN(uart_rx_count, usb_tx_count),sizeof(buf));
 
+    if (uart2usb_xfer_count > 0){
         ring_buf_rd_n(&scpi_rx_ring_buf, buf, uart2usb_xfer_count);
         int written_bytes = tud_cdc_n_write(SCPI_USB_ID, buf, uart2usb_xfer_count);
 

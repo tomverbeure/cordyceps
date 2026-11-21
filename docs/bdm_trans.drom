@@ -1,0 +1,5 @@
+{signal: [
+  {name: 'DSCK',  wave: 'p.....|...', period:2},
+  {name: 'DSDI',  wave: '0..1.4.5.6.6|6.6.0..', data: ['MODE', 'CNTRL', 'D<0>', 'D<1>','D<N-2>', 'D<N-1>']},
+  {name: 'DSDO',  wave: '10...3.3.7.7|7.7.1..', data: ['S<0>', 'S<1>', 'D<0>', 'D<0>', 'D<1>','D<N-2>', 'D<N-1>']},  
+]}

@@ -1,28 +1,105 @@
 #include <stdio.h>
-#include <string.h>
 
 #include "pico/stdlib.h"
 #include "tusb.h"
 
 #include "bdm.h"
+#include "pins.h"
 #include "rtc.h"
 #include "scpi_uart.h"
-#include "pins.h"
+#include "vxw_uart.h"
 
-#define VXW_USB_ID          1
+#define DEBUG_PB19  1
 
-#define VXW_UART_ID         uart1
-#define VXW_UART_BAUD_RATE  38400
-#define VXW_UART_TX_PIN     VXW_RXD
-#define VXW_UART_RX_PIN     VXW_TXD
-
-void vxw_uart_init()
+// FIXME: this code block handling of USB transfers.
+// Convert to an FSM to allow cooperative multi-tasking?
+bool enable_boot_diagnostics()
 {
-    uart_init(VXW_UART_ID, VXW_UART_BAUD_RATE);
-    gpio_set_function(VXW_UART_TX_PIN, GPIO_FUNC_UART);
-    gpio_set_function(VXW_UART_RX_PIN, GPIO_FUNC_UART);
-    uart_set_format(VXW_UART_ID, 8, 1, UART_PARITY_NONE);
-    uart_set_fifo_enabled(VXW_UART_ID, true);
+    vxw_log(">>> enable_boot_diagnostics():\n\r");
+
+    //============================================================
+    // Set PBDAT watchpoint
+    //============================================================
+    vxw_log(">>> Setting PBDAT watchpoint.\n\r");
+
+    // mpc860PBDAT: memcInit samples PB19 to select verbose boot diagnostics.
+    const uint32_t PBDAT = 0xff000ac4;
+
+    const char *error = "!!! BDM reset/halt failed\n\r";
+    int ret = bdm_hreset_and_halt_cpu();
+    if (!ret)
+        goto fail;
+
+    error = "!!! BDM watchpoint setup failed\n\r";
+    ret = bdm_set_watchpoint(PBDAT);
+    if (!ret)
+        goto fail;
+
+    error = "!!! BDM resume to boot watchpoint failed\n\r";
+    ret = bdm_request_resume();
+    if (!ret)
+        goto fail;
+
+    //============================================================
+    // Watchpoint hit
+    //============================================================
+    vxw_log(">>> Waiting for PBDAT watchpoint hit.\n\r");
+
+    error = "!!! BDM boot watchpoint wait failed\n\r";
+    ret = bdm_wait_for_watchpoint(PBDAT, 1000);
+    if (!ret)
+        goto fail;
+
+    // Disable the watchpoint before proceeding; later PBDAT reads must not halt.
+    error = "!!! BDM watchpoint removal failed\n\r";
+    ret = bdm_clear_watchpoint();
+    if (!ret)
+        goto fail;
+
+    #if DEBUG_PB19==1
+    {
+        error = "!!! BDM R3 read failed\n\r";
+        uint32_t r3;
+        ret = bdm_read_gpr(3, &r3);
+        if (!ret)
+            goto fail;
+    
+        // PB19 uses PowerPC's MSB-first numbering: its mask is 0x00001000.
+        char str[64];
+        snprintf(str, sizeof(str), ">>> R3=0x%08lx, PB[19]=%u\n\r", (unsigned long)r3, (unsigned)((r3 >> 12) & 1));
+        vxw_log(str);
+    }
+    #endif
+
+    error = "!!! BDM boot diagnostic override failed\n\r";
+
+    // RLWINM R3,R3,0,20,18
+    ret = bdm_instruction(0x54630524);
+    if (!ret)
+        goto fail;
+
+    // Check the execution status of RLWINM by shifting in a NOP
+    ret = bdm_instruction(0x60000000);
+    if (!ret)
+        goto fail;
+
+    error = "!!! BDM resume failed\n\r";
+    ret = bdm_resume_cpu();
+    if (!ret)
+        goto fail;
+
+    vxw_log(">>> PB[19] successfully cleared!\n\r");
+    return true;
+
+fail:
+    vxw_log(error);
+    return false;
+}
+
+int boot_setup()
+{
+    int ret = enable_boot_diagnostics();
+    return ret;
 }
 
 int main(void)
@@ -33,7 +110,8 @@ int main(void)
     bdm_init();
     rtc_init();
 
-    // An endless loop is needed otherwise USB reset won't be serviced.
+    boot_setup();
+
     while(true){
         tud_task();
 
@@ -42,13 +120,7 @@ int main(void)
             uint8_t c = tud_cdc_n_read_char(VXW_USB_ID);
             switch(c){
                 case 'r': {
-                    bdm_pulse_hreset();
-                    break;
-                }
-                case 'h': {
-                    const char str[] = "VxWorks terminal active\n";
-                    tud_cdc_n_write(VXW_USB_ID, str, strlen(str));
-                    tud_cdc_n_write_flush(VXW_USB_ID);
+                    boot_setup();
                     break;
                 }
                 case 't': {
@@ -57,26 +129,14 @@ int main(void)
                     rtc_test(&time_valid, &rtc_time);
 
                     char buf[64];
-                    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", &rtc_time);
-                    tud_cdc_n_write(VXW_USB_ID, buf, strlen(buf));
-                    tud_cdc_n_write_char(VXW_USB_ID, '\n');
-                    tud_cdc_n_write_flush(VXW_USB_ID);
+                    strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S\n", &rtc_time);
+                    vxw_log(buf);
                     break;
                 }
             }
         }
 
-        // VXW UART to USB
-        int pending = 0;
-        while(uart_is_readable(VXW_UART_ID) && tud_cdc_n_write_available(VXW_USB_ID)){
-            uint8_t ch = uart_getc(VXW_UART_ID);
-            tud_cdc_n_write_char(VXW_USB_ID, ch);
-            ++pending;
-        }
-        if (pending){
-            tud_cdc_n_write_flush(VXW_USB_ID);
-        }
-
+        vxw_uart_process();
         scpi_uart_process();
     }
 }
