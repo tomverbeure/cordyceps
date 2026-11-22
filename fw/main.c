@@ -205,6 +205,26 @@ fail:
     return false;
 }
 
+// Dump value of BRGCx registers
+// See section 20.4
+void uart_brgc_dump(int uart_nr)
+{
+    vxw_log("Halting CPU...\n\r");
+    int ret = bdm_halt_cpu();
+    if (ret == false){
+        vxw_log("bdm_halt_cpu() failed\n\r");
+        return;
+    }
+
+    vxw_log("Resuming CPU...\n\r");
+    ret = bdm_resume_cpu();
+    if (ret == false){
+        vxw_log("bdm_resume_cpu() failed\n\r");
+        return;
+    }
+}
+
+
 int boot_setup()
 {
     int ret = enable_boot_diagnostics();
@@ -251,6 +271,11 @@ int main(void)
                     char buf[64];
                     strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S\n\r", &rtc_time);
                     vxw_log(buf);
+                    break;
+                }
+                case 'u': {
+                    uart_brgc_dump(0);
+                    //uart_brgc_dump(1);
                     break;
                 }
             }

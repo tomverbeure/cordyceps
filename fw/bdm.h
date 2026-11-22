@@ -7,12 +7,13 @@
 #define BDM_STATUS_TIMEOUT 0xff
 
 void bdm_init();
-bool bdm_hreset_and_halt_cpu();
+bool bdm_hreset_and_halt_cpu(void);
+bool bdm_halt_cpu(void);
 bool bdm_request_resume(void);
 bool bdm_resume_cpu();
 
 bool bdm_set_watchpoint(uint32_t address);
-bool bdm_clear_watchpoint();
+bool bdm_clear_watchpoint(void);
 bool bdm_watchpoint_hit(uint32_t address);
 bool bdm_wait_for_watchpoint(uint32_t address, uint32_t timeout_ms);
 

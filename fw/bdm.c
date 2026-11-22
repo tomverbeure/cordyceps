@@ -1,7 +1,11 @@
+#include <stdio.h>
+
 #include "pico/stdlib.h"
 
 #include "bdm.h"
 #include "pins.h"
+
+#include "vxw_uart.h"
 
 // Needs to be very long at cold power up. Not sure why...
 #define BDM_FRZ_TIMEOUT_US  1000000
@@ -51,7 +55,7 @@ void bdm_init()
     gpio_put(nBDM_SD_ENA, 0);
 }
 
-bool bdm_hreset_and_halt_cpu()
+bool bdm_hreset_and_halt_cpu(void)
 {
     halted_at_reset = false;
 
@@ -100,6 +104,22 @@ enum {
     BDM_MODE_INSTRUCTION_DATA = 0,
     BDM_MODE_TRAP_COMMAND     = 1,
 };
+
+enum {
+    // With BDM_MODE_INSTRUCTION_DATA:
+    BDM_CNTRL_INSTRUCTION = 0,
+    BDM_CNTRL_DATA        = 1,
+
+    // With BDM_MODE_TRAP_COMMAND:
+    BDM_CNTRL_TRAP_ENABLE = 0,
+    BDM_CNTRL_COMMAND     = 1,
+};
+
+enum {
+    BDM_CMD_ASSERT_NONMASKABLE_BREAK = 0x5F,
+    BDM_CMD_CLEAR_BREAK_REQUESTS     = 0x1F,
+};
+
 
 // MPC860 special-purpose registers
 enum {
@@ -157,7 +177,7 @@ static bool bdm_checked_xfer(bool cntrl, uint32_t data, uint32_t *value, uint8_t
 
 bool bdm_instruction(uint32_t instruction)
 {
-    int ret = bdm_checked_xfer(false, instruction, NULL, BDM_STATUS_NULL);
+    int ret = bdm_checked_xfer(BDM_CNTRL_INSTRUCTION, instruction, NULL, BDM_STATUS_NULL);
     return ret;
 }
 
@@ -173,7 +193,7 @@ bool bdm_read_gpr(unsigned reg, uint32_t *value)
     if (!ret)
         return false;
 
-    ret = bdm_checked_xfer(false, PPC_NOP, value, BDM_STATUS_DATA);
+    ret = bdm_checked_xfer(BDM_CNTRL_INSTRUCTION, PPC_NOP, value, BDM_STATUS_DATA);
     return ret;
 }
 
@@ -191,7 +211,7 @@ static bool bdm_write_r0(uint32_t value)
     if (!ret)
         return false;
 
-    ret = bdm_checked_xfer(true, value, NULL, BDM_STATUS_NULL);
+    ret = bdm_checked_xfer(BDM_CNTRL_DATA, value, NULL, BDM_STATUS_NULL);
     return ret;
 }
 
@@ -266,7 +286,7 @@ restore_r0:
     return ret && restored;
 }
 
-bool bdm_clear_watchpoint()
+bool bdm_clear_watchpoint(void)
 {
     if (!gpio_get(BDM_FRZ))
         return false;
@@ -378,7 +398,9 @@ static bool bdm_prepare_resume(void)
     if (!ret)
         return false;
 
-    ret = bdm_write_spr(SPR_DER, value & ~PPC_BIT(14));
+    // 31 -> DPIE: Development Port Interrupt Enable. BDM to interrupt a CPU at random.
+    // 14 -> TRE : Trace Interrupt Enable. 
+    ret = bdm_write_spr(SPR_DER, (value & ~PPC_BIT(14)) | PPC_BIT(31) );
     if (!ret)
         return false;
 
@@ -387,6 +409,8 @@ static bool bdm_prepare_resume(void)
     if (!ret)
         return false;
 
+    // 21 -> SE: Single-Step Enable
+    // 22 -> BE: Branch Trace Enable
     ret = bdm_write_spr(SPR_SRR1, value & ~(PPC_BIT(21) | PPC_BIT(22)));
     if (!ret)
         return false;
@@ -499,6 +523,39 @@ bool bdm_wait_until_ready(uint32_t timeout_us)
     }
 
     return true;
+}
+
+bool bdm_halt_cpu(void)
+{
+    // Values not used
+    uint8_t     status;
+    uint32_t    rx;
+
+    // Not sure why this is needed, but without this, calling bdm_halt_cpu wouldn't
+    // work the first time you call it.
+    if (!bdm_xfer(BDM_MODE_TRAP_COMMAND, BDM_CNTRL_COMMAND, BDM_CMD_CLEAR_BREAK_REQUESTS, &status, &rx, 1000))
+        return false;
+
+    // Nonmaskable breakpoint request
+    bool sent = bdm_xfer(BDM_MODE_TRAP_COMMAND, BDM_CNTRL_COMMAND, BDM_CMD_ASSERT_NONMASKABLE_BREAK, &status, &rx, 1000);
+    uint8_t assert_status = status;
+
+    bool halted = sent && bdm_wait_until_freeze(BDM_FRZ_TIMEOUT_US);
+
+    // Release the request, even after a timeout.
+    bool released = bdm_xfer(BDM_MODE_TRAP_COMMAND, BDM_CNTRL_COMMAND, BDM_CMD_CLEAR_BREAK_REQUESTS, &status, &rx, 1000);
+    uint8_t clear_status = status;
+
+    #if 0
+    char str[64];
+    snprintf(str, sizeof(str), ">>> assert_status=%d, clear_status=%d\n\r", assert_status, clear_status);
+    vxw_log(str);
+    #endif
+
+    if (halted)
+        halted_at_reset = false;
+
+    return sent && halted && released;
 }
 
 // FIXME: this should eventually be changed to use PIO, but it's good enough
