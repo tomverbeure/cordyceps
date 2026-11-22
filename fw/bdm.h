@@ -19,6 +19,8 @@ bool bdm_wait_for_watchpoint(uint32_t address, uint32_t timeout_ms);
 
 bool bdm_instruction(uint32_t instruction);
 bool bdm_read_gpr(unsigned reg, uint32_t *value);
+bool bdm_read_word(uint32_t address, uint32_t *value);
+bool bdm_read_halfword(uint32_t address, uint16_t *value);
 
 bool bdm_wait_until_freeze(uint32_t timeout_us);
 bool bdm_wait_until_ready(uint32_t timeout_us);

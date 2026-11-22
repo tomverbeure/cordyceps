@@ -203,11 +203,14 @@ static bool bdm_read_r0(uint32_t *value)
     return ret;
 }
 
-// Send MFSPR r0,DPDR, then supply the register value as DPDR data.
+// Send MFSPR rN,DPDR, then supply the register value as DPDR data.
 // See mpc8xx_set_gpr() in mpc8xxbdm.c
-static bool bdm_write_r0(uint32_t value)
+static bool bdm_write_gpr(unsigned reg, uint32_t value)
 {
-    int ret = bdm_instruction(bdm_spr_instruction(SPR_DPDR, false));
+    if (reg >= 32 || !gpio_get(BDM_FRZ))
+        return false;
+
+    int ret = bdm_instruction(bdm_spr_instruction(SPR_DPDR, false) | (reg << 21));
     if (!ret)
         return false;
 
@@ -229,7 +232,7 @@ static bool bdm_read_spr(unsigned spr, uint32_t *value)
 // Copy a value into R0 then load it into an SPR register
 static bool bdm_write_spr(unsigned spr, uint32_t value)
 {
-    int ret = bdm_write_r0(value);
+    int ret = bdm_write_gpr(0, value);
     if (!ret)
         return false;
 
@@ -240,11 +243,60 @@ static bool bdm_write_spr(unsigned spr, uint32_t value)
 // Restore the scratch register and clock a NOP to check the preceding operation.
 static bool bdm_restore_r0(uint32_t value)
 {
-    int ret = bdm_write_r0(value);
+    int ret = bdm_write_gpr(0, value);
     if (!ret)
         return false;
     ret = bdm_instruction(PPC_NOP);
     return ret;
+}
+
+// Read memory through R1 while preserving R1 and R0.
+static bool bdm_read_memory(uint32_t address, uint32_t instruction, uint32_t *value)
+{
+    uint32_t saved_r0;
+    uint32_t saved_r1;
+
+    if (!bdm_read_gpr(0, &saved_r0) || !bdm_read_gpr(1, &saved_r1))
+        return false;
+
+    // Load R1 with the address
+    bool ret = bdm_write_gpr(1, address);
+    if (ret){
+        // Read data at R1 location
+        ret = bdm_instruction(instruction);
+    }
+
+    uint32_t result;
+    if (ret)
+        ret = bdm_read_r0(&result);
+
+    // Restore R1 and R0
+    bool ret_restore_r1 = bdm_write_gpr(1, saved_r1);
+    bool ret_restore_r0 = bdm_restore_r0(saved_r0);
+    if (!ret || !ret_restore_r1 || !ret_restore_r0)
+        return false;
+
+    *value = result;
+    return true;
+}
+
+// Read one aligned 32-bit word.
+bool bdm_read_word(uint32_t address, uint32_t *value)
+{
+    // LWZ R0,0(R1)
+    return bdm_read_memory(address, 0x80010000, value);
+}
+
+// Read one aligned 16-bit register without accessing adjacent registers.
+bool bdm_read_halfword(uint32_t address, uint16_t *value)
+{
+    uint32_t result;
+    // LHZ R0,0(R1)
+    if (!bdm_read_memory(address, 0xa0010000, &result))
+        return false;
+
+    *value = (uint16_t)result;
+    return true;
 }
 
 bool bdm_set_watchpoint(uint32_t address)

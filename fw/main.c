@@ -65,10 +65,12 @@ bool enable_boot_diagnostics()
         ret = bdm_read_gpr(3, &r3);
         if (!ret)
             goto fail;
+
+        unsigned pb19 = (r3 >> 12) & 1;
     
         // PB19 uses PowerPC's MSB-first numbering: its mask is 0x00001000.
         char str[64];
-        snprintf(str, sizeof(str), ">>> R3=0x%08lx, PB[19]=%u\n\r", (unsigned long)r3, (unsigned)((r3 >> 12) & 1));
+        snprintf(str, sizeof(str), ">>> R3=0x%08x, PB[19]=%u\n\r", r3, pb19);
         vxw_log(str);
     }
     #endif
@@ -205,8 +207,7 @@ fail:
     return false;
 }
 
-// Dump value of BRGCx registers
-// See section 20.4
+// SCC UART
 void uart_brgc_dump(int uart_nr)
 {
     vxw_log("Halting CPU...\n\r");
@@ -216,12 +217,74 @@ void uart_brgc_dump(int uart_nr)
         return;
     }
 
+    // SCC register banks have a 0x20-byte stride.
+    const uint32_t IMMR     = 0xff000000;
+    const uint32_t GSMR_L   = IMMR + 0x0a00 + 32 * uart_nr;
+    const uint32_t GSMR_H   = GSMR_L + 4;
+    const uint32_t SICR     = IMMR + 0x0aec;
+
+    uint32_t gsmr_l;
+    bdm_read_word(GSMR_L, &gsmr_l);
+
+    uint32_t gsmr_h;
+    bdm_read_word(GSMR_H, &gsmr_h);
+
+    uint32_t sicr;
+    bdm_read_word(SICR, &sicr);
+
+    unsigned route      = (sicr >> (8 * uart_nr)) & 0xff;
+    unsigned tcs        = route & 7;
+    unsigned rcs        = (route >> 3) & 7;
+    unsigned tdm        = (route >> 6) & 1;
+
+    uint32_t brgc = 0;
+    const uint32_t BRGC = IMMR + 0x09f0 + 4 * tcs;
+    bdm_read_word(BRGC, &brgc);
+
+    // Capture all values while halted, then resume before formatting output.
     vxw_log("Resuming CPU...\n\r");
     ret = bdm_resume_cpu();
     if (ret == false){
         vxw_log("bdm_resume_cpu() failed\n\r");
         return;
     }
+
+    unsigned mode       = gsmr_l & 0xf;
+    unsigned ent        = (gsmr_l >> 4) & 1;
+    unsigned enr        = (gsmr_l >> 5) & 1;
+    unsigned tdcr       = (gsmr_l >> 16) & 3;
+    unsigned rdcr       = (gsmr_l >> 14) & 3;
+    unsigned tdcr_div[] = {1, 8, 16, 32};
+
+    char str[192];
+
+    snprintf(str, sizeof(str), "SCC%u GSMR_L=0x%08x GSMR_H=0x%08x\n\r",
+             uart_nr + 1, gsmr_l, gsmr_h);
+    vxw_log(str);
+    snprintf(str, sizeof(str), "  MODE=%u ENR=%u ENT=%u TDCR=%u (%d) RDCR=%u (%d)\n\r",
+             mode, enr, ent, tdcr, tdcr_div[tdcr], rdcr, tdcr_div[rdcr]);
+    vxw_log(str);
+    snprintf(str, sizeof(str), "SICR=0x%08x SC%u=%u RCS=%u TCS=%u\n\r",
+             sicr, uart_nr + 1, tdm, rcs, tcs);
+    vxw_log(str);
+
+    unsigned rst        = (brgc >> 17) & 1;
+    unsigned en         = (brgc >> 16) & 1;
+    unsigned extc       = (brgc >> 14) & 3;
+    unsigned atb        = (brgc >> 13) & 1;
+    unsigned cd         = (brgc >> 1) & 0xfff;
+    unsigned div16      = brgc & 1;
+    unsigned brg_div    = (cd + 1) * (div16 ? 16 : 1);
+
+    snprintf(str, sizeof(str), "BRGC%u=0x%08x\n\r", tcs + 1, brgc);
+    vxw_log(str);
+    snprintf(str, sizeof(str), "  RST=%u EN=%u EXTC=%u ATB=%u CD=%u DIV16=%u; BRG divider=%u\n\r",
+             rst, en, extc, atb, cd, div16, brg_div);
+    vxw_log(str);
+
+    unsigned tx_baud = 25000000 / (brg_div * tdcr_div[tdcr]);
+    snprintf(str, sizeof(str), "Baud rate: %u\n\r", tx_baud);
+    vxw_log(str);
 }
 
 
@@ -274,8 +337,7 @@ int main(void)
                     break;
                 }
                 case 'u': {
-                    uart_brgc_dump(0);
-                    //uart_brgc_dump(1);
+                    uart_brgc_dump(1); // SCC2: SCPI/RS-232
                     break;
                 }
             }
