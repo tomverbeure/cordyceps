@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #include "pico/stdlib.h"
+#include "tusb.h"
 
 #include "bdm.h"
 #include "pins.h"
@@ -88,7 +89,9 @@ bool bdm_hreset_and_halt_cpu(void)
 
     // The CPU is now in debug mode!
     halted_at_reset = true;
-    return true;
+    ret = bdm_restore_boot_clock();
+
+    return ret;
 }
 
 // Table 44-12 / Section 44.3.2.4.2
@@ -297,6 +300,178 @@ bool bdm_read_halfword(uint32_t address, uint16_t *value)
 
     *value = (uint16_t)result;
     return true;
+}
+
+static bool bdm_write_memory(uint32_t address, uint32_t value, bool flush_cache)
+{
+    uint32_t saved_r0;
+    uint32_t saved_r1;
+
+    // Save R0 and R1 for later.
+    int ret = bdm_read_gpr(0, &saved_r0);
+    if (!ret)
+        return false;
+
+    ret = bdm_read_gpr(1, &saved_r1);
+    if (!ret)
+        return false;
+
+    // Load R1 with address and R0 with data
+    ret = bdm_write_gpr(1, address);
+    if (!ret)
+        goto restore;
+
+    ret = bdm_write_gpr(0, value);
+    if (!ret)
+        goto restore;
+
+    // Store to memory
+    // STW R0,0(R1)
+    ret = bdm_instruction(0x90010000);
+    if (!ret)
+        goto restore;
+
+    if (flush_cache) {
+        // Data Cache Block Flush for memory address in R1.
+        // DCBF 0,R1
+        ret = bdm_instruction(0x7c0008ac);
+        if (!ret)
+            goto restore;
+
+        // Memory synchronization barrier
+        // SYNC
+        ret = bdm_instruction(0x7c0004ac);
+    } else {
+        // Enforce In-order Execution of I/O
+        // EIEIO     (the ISA architects must have had fun with this.)
+        ret = bdm_instruction(0x7c0006ac);
+    }
+    if (!ret)
+        goto restore;
+
+    ret = bdm_instruction(PPC_NOP);
+
+restore:
+    bool ret_restore_r1 = bdm_write_gpr(1, saved_r1);
+    bool ret_restore_r0 = bdm_restore_r0(saved_r0);
+    return ret && ret_restore_r1 && ret_restore_r0;
+}
+
+// Disable double-clock mode on TDS3000B model.
+// This is needed because HRESET doesn't do it, and it leads to all kind
+// of bus timing problems that were a !@#$!@#$ to debug.
+bool bdm_restore_boot_clock(void)
+{
+    vxw_log(">>> bdm_restore_boot_clock():\n\r");
+
+    if (!gpio_get(BDM_FRZ))
+        return false;
+
+    const uint32_t SCCR     = 0xff000280;
+    const uint32_t PLPRCR   = 0xff000284;
+
+    uint32_t saved_r0;
+    uint32_t saved_ictrl;
+
+    int ret = bdm_read_r0(&saved_r0);
+    if (!ret)
+        return false;
+
+    const char *error = "!!! BDM boot clock ICTRL read failed\n\r";
+    ret = bdm_read_spr(SPR_ICTRL, &saved_ictrl);
+    if (!ret)
+        goto restore_r0;
+
+
+    uint32_t pll;
+    uint32_t clock;
+
+    error = "!!! BDM boot clock read failed\n\r";
+    ret = bdm_read_word(PLPRCR, &pll);
+    if (!ret)
+        goto restore_r0;
+
+    ret = bdm_read_word(SCCR, &clock);
+    if (!ret)
+        goto restore_r0;
+
+    char str[128];
+    snprintf(str, sizeof(str), ">>> Boot clock: PLPRCR=0x%08x SCCR=0x%08x. Restoring single rate.\n\r", pll, clock);
+    vxw_log(str);
+
+    // MF changes require CPU serialization to be enabled: ICTRL[ISCT_SER]=000 (table 14-10).
+    error = "!!! BDM boot clock serialization failed\n\r";
+    ret = bdm_write_spr(SPR_ICTRL, saved_ictrl & ~7u);
+    if (!ret)
+        goto restore_ictrl;
+
+    ret = bdm_instruction(PPC_NOP);
+    if (!ret)
+        goto restore_ictrl;
+
+    ret = bdm_instruction(PPC_NOP);
+    if (!ret)
+        goto restore_ictrl;
+
+    // First undouble the PLL (MF=0 -> x1), then remove the bus divider
+    // (EBDF=00 -> divide by 1). This avoids temporarily overclocking the bus.
+    error = "!!! BDM boot clock write failed\n\r";
+
+    // We're not only clearing MF but also touching all other bits of the register.
+    // That's fine at initial powerup, but it clobbers flags that you might need
+    // if you do this at random. (We don't plan to do this...)
+    ret = bdm_write_memory(PLPRCR, 0x00005000, false);
+    if (!ret)
+        goto restore_ictrl;
+
+    // SCCR: System Clock and Reset Control.
+    // Set everything to reasonable defaults. Same thing here: we're clobbering
+    // a lot of things that might only be OK after initial reset.
+    ret = bdm_write_memory(SCCR, 0x21800000, false);
+    if (!ret)
+        goto restore_ictrl;
+
+
+    // Check if settings change worked...
+    error = "!!! BDM boot clock readback failed\n\r";
+    ret = bdm_read_word(PLPRCR, &pll);
+    if (!ret)
+        goto restore_ictrl;
+
+    ret = bdm_read_word(SCCR, &clock);
+    if (!ret)
+        goto restore_ictrl;
+
+    // PLL status bits can change; verify MF rather than the entire PLPRCR.
+    ret = !(pll & 0xfff00000) && clock == 0x21800000;
+    if (!ret)
+        goto restore_ictrl;
+
+    snprintf(str, sizeof(str), ">>> Boot clock restored: PLPRCR=0x%08x SCCR=0x%08x; PLL multiplier=1.\n\r", pll, clock);
+    vxw_log(str);
+
+restore_ictrl:
+    int restored_ictrl = bdm_write_spr(SPR_ICTRL, saved_ictrl);
+
+    if (restored_ictrl)
+        restored_ictrl = bdm_instruction(PPC_NOP);
+
+    if (restored_ictrl)
+        restored_ictrl = bdm_instruction(PPC_NOP);
+
+    if (!restored_ictrl) {
+        if (!ret)
+            vxw_log(error);
+        error = "!!! BDM boot clock ICTRL restore failed\n\r";
+        ret = false;
+    }
+
+restore_r0:
+    if (!ret)
+        vxw_log(error);
+
+    int restored = bdm_restore_r0(saved_r0);
+    return ret && restored;
 }
 
 bool bdm_set_watchpoint(uint32_t address)

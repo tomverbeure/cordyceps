@@ -9,6 +9,7 @@
 void bdm_init();
 bool bdm_hreset_and_halt_cpu(void);
 bool bdm_halt_cpu(void);
+bool bdm_restore_boot_clock(void);
 bool bdm_request_resume(void);
 bool bdm_resume_cpu();
 
