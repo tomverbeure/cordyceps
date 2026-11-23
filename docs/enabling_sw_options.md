@@ -68,6 +68,7 @@ The patch is trivial:
 
 In other words, the function gets replaced like this:
 
+```c
 int softwareVideoOptionAvailable(void) {
     return 1;
 }
