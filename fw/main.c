@@ -69,7 +69,7 @@ bool enable_boot_diagnostics()
         unsigned pb19 = (r3 >> 12) & 1;
     
         // PB19 uses PowerPC's MSB-first numbering: its mask is 0x00001000.
-        char str[64];
+        char str[256];
         snprintf(str, sizeof(str), ">>> R3=0x%08x, PB[19]=%u\n\r", r3, pb19);
         vxw_log(str);
     }
@@ -182,7 +182,7 @@ static bool override_boot_card_id(void)
         if (!ret)
             goto fail;
     
-        char str[64];
+        char str[256];
         snprintf(str, sizeof(str), ">>> CS7 card ID read: 0x%02x\n\r", (value & 0xff));
         vxw_log(str);
     }
@@ -256,7 +256,7 @@ void uart_brgc_dump(int uart_nr)
     unsigned rdcr       = (gsmr_l >> 14) & 3;
     unsigned tdcr_div[] = {1, 8, 16, 32};
 
-    char str[192];
+    char str[256];
 
     snprintf(str, sizeof(str), "SCC%u GSMR_L=0x%08x GSMR_H=0x%08x\n\r",
              uart_nr + 1, gsmr_l, gsmr_h);
@@ -287,6 +287,54 @@ void uart_brgc_dump(int uart_nr)
     vxw_log(str);
 }
 
+bool patch_sw_options(bool enable_vid, bool enable_tmt, bool enable_lim, bool enable_aam)
+{
+    if (!enable_vid && !enable_tmt && !enable_lim && !enable_aam){
+        vxw_log(">>> Don't enable any software functions.\n\r");
+        return true;
+    }
+
+    const struct {
+        const char  *name;
+        bool        enable;
+        uint32_t    address;        // Start of function where instructions must be patched
+    } options[] = {
+        { "TDS3VID", enable_vid, 0x001c48b0 }, // softwareVideoOptionAvailable
+        { "TDS3TMT", enable_tmt, 0x001c494c }, // softwareMaskTestOptionAvailable
+        { "TDS3LIM", enable_lim, 0x001c49d8 }, // softwareLimitTestOptionAvailable
+        { "TDS3AAM", enable_aam, 0x001c4a64 }, // softwareAamOptionAvailable
+    };
+
+    const char * error = "!!! BDM software-option instruction write failed\n\r";
+    for (unsigned i = 0; i < sizeof(options) / sizeof(options[0]); ++i) {
+        char str[256];
+
+        if (!options[i].enable){
+            snprintf(str, sizeof(str), ">>> %s not enabled.\n\r", options[i].name);
+            vxw_log(str);
+            continue;
+        }
+
+        // LI R3,1
+        bool ret = bdm_write_word(options[i].address, 0x38600001);
+        if (!ret)
+            goto fail;
+
+        // BLR
+        ret = bdm_write_word(options[i].address + 4, 0x4e800020);
+        if (!ret)
+            goto fail;
+
+        snprintf(str, sizeof(str), ">>> %s enabled.\n\r", options[i].name);
+        vxw_log(str);
+    }
+
+    return true;
+
+fail:
+    vxw_log(error);
+    return false;
+}
 
 int boot_setup()
 {
@@ -298,10 +346,67 @@ int boot_setup()
     if (!ret)
         return false;
 
+    // sysInit (0x00006000): stop before starting main application
+    const uint32_t APP_ENTRY = 0x00006000;
+
+    uint32_t instruction;
+
+    const char *error = "!!! BDM application breakpoint setup failed\n\r";
+    ret = bdm_set_instruction_breakpoint(APP_ENTRY);
+    if (!ret)
+        goto fail;
+
+    // Loop twice: if LZ4 compression is used, the scope hits 0x6000 two times,
+    // only the second time is the main application.
+    for (unsigned attempt = 0; attempt < 2; ++attempt) {
+        vxw_log(">>> Waiting for sysInit at 0x00006000.\n\r");
+
+        error = "!!! BDM resume to application breakpoint failed\n\r";
+        ret = bdm_request_resume();
+        if (!ret)
+            goto fail;
+
+        error = "!!! BDM application breakpoint wait failed\n\r";
+        // It takes ~10s to LZW decompress the firmware from flash.
+        ret = bdm_wait_for_instruction_breakpoint(APP_ENTRY, 11000000);
+        if (!ret)
+            goto fail;
+
+        error = "!!! BDM application entry read failed\n\r";
+        ret = bdm_read_word(APP_ENTRY, &instruction);
+        if (!ret)
+            goto fail;
+
+        // The main application start with this...
+        if (instruction == 0x7c6000a6) // sysInit: MFMSR R3
+            break;
+
+        // The LZ4 secondary loader also enters at 0x6000. Let it unpack the
+        // application and catch the second visit using the same breakpoint.
+        error = "!!! Unexpected application entry instruction\n\r";
+        if (instruction != 0x7c3e0b78 || attempt != 0) // Loader: MR R30,R1
+            goto fail;
+
+        vxw_log(">>> LZ4 loader entry; waiting for the unpacked application.\n\r");
+    }
+
+    error = "!!! BDM application breakpoint removal failed\n\r";
+    ret = bdm_clear_instruction_breakpoint();
+    if (!ret)
+        goto fail;
+
+    ret = patch_sw_options(false, true, true, true); // VID, TMT, LIM, AAM
+    if (!ret)
+        return false;
+
     ret = bdm_resume_cpu();
     if (!ret)
         vxw_log("!!! BDM resume failed\n\r");
     return ret;
+
+fail:
+    vxw_log(error);
+    return false;
 }
 
 int main(void)
@@ -339,6 +444,8 @@ int main(void)
                 case 'u': {
                     uart_brgc_dump(1); // SCC2: SCPI/RS-232
                     break;
+                }
+                case 'p': {
                 }
             }
         }

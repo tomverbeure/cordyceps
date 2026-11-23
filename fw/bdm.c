@@ -357,6 +357,11 @@ restore:
     return ret && ret_restore_r1 && ret_restore_r0;
 }
 
+bool bdm_write_word(uint32_t address, uint32_t value)
+{
+    return bdm_write_memory(address, value, /* flush_cache */ true);
+}
+
 // Disable double-clock mode on TDS3000B model.
 // This is needed because HRESET doesn't do it, and it leads to all kind
 // of bus timing problems that were a !@#$!@#$ to debug.
@@ -470,6 +475,105 @@ restore_r0:
     if (!ret)
         vxw_log(error);
 
+    int restored = bdm_restore_r0(saved_r0);
+    return ret && restored;
+}
+
+// Always use instruction comparator A / breakpoint 0.
+bool bdm_set_instruction_breakpoint(uint32_t address)
+{
+    if (!gpio_get(BDM_FRZ) || (address & 3))
+        return false;
+
+    uint32_t saved_r0, ictrl, der;
+    int ret = bdm_read_r0(&saved_r0);
+    if (!ret)
+        return false;
+
+    ret = bdm_write_spr(SPR_CMPA, address);
+    if (!ret)
+        goto restore_r0;
+
+    ret = bdm_read_spr(SPR_ICTRL, &ictrl);
+    if (!ret)
+        goto restore_r0;
+
+    // CTA=100: equal; IW0=10: comparator A; SIW0EN: software trap.
+    // Clear IFM so this instruction match is not bypassed.
+    ictrl &= ~(PPC_BIT(0) | PPC_BIT(1) | PPC_BIT(2) | PPC_BIT(12) |
+               PPC_BIT(13) | PPC_BIT(24) | PPC_BIT(28));
+    ictrl |= PPC_BIT(0) | PPC_BIT(12) | PPC_BIT(20);
+    ret = bdm_write_spr(SPR_ICTRL, ictrl);
+    if (!ret)
+        goto restore_r0;
+
+    ret = bdm_read_spr(SPR_DER, &der);
+    if (!ret)
+        goto restore_r0;
+
+    // DER[IBRKE]: enter debug mode on an instruction breakpoint.
+    ret = bdm_write_spr(SPR_DER, der | PPC_BIT(29));
+
+restore_r0:
+    int restored = bdm_restore_r0(saved_r0);
+    return ret && restored;
+}
+
+bool bdm_clear_instruction_breakpoint(void)
+{
+    if (!gpio_get(BDM_FRZ))
+        return false;
+
+    uint32_t saved_r0, ictrl, der;
+    int ret = bdm_read_r0(&saved_r0);
+    if (!ret)
+        return false;
+
+    ret = bdm_read_spr(SPR_ICTRL, &ictrl);
+    if (!ret)
+        goto restore_r0;
+
+    ictrl &= ~(PPC_BIT(0) | PPC_BIT(1) | PPC_BIT(2) | PPC_BIT(12) |
+               PPC_BIT(13) | PPC_BIT(20) | PPC_BIT(24) | PPC_BIT(28));
+    ret = bdm_write_spr(SPR_ICTRL, ictrl);
+    if (!ret)
+        goto restore_r0;
+
+    // Leave DER[IBRKE] enabled if another instruction breakpoint is active.
+    if (!(ictrl & 0x00000ff0)) {
+        ret = bdm_read_spr(SPR_DER, &der);
+        if (!ret)
+            goto restore_r0;
+
+        ret = bdm_write_spr(SPR_DER, der & ~PPC_BIT(29));
+    }
+
+restore_r0:
+    int restored = bdm_restore_r0(saved_r0);
+    return ret && restored;
+}
+
+bool bdm_instruction_breakpoint_hit(uint32_t address)
+{
+    if (!gpio_get(BDM_FRZ))
+        return false;
+
+    uint32_t saved_r0, icr, pc;
+    int ret = bdm_read_r0(&saved_r0);
+    if (!ret)
+        return false;
+
+    ret = bdm_read_spr(SPR_ICR, &icr);
+    if (!ret)
+        goto restore_r0;
+
+    ret = bdm_read_spr(SPR_SRR0, &pc);
+    if (!ret)
+        goto restore_r0;
+
+    ret = (icr & PPC_BIT(29)) && pc == address;
+
+restore_r0:
     int restored = bdm_restore_r0(saved_r0);
     return ret && restored;
 }
@@ -723,6 +827,31 @@ bool bdm_wait_for_watchpoint(uint32_t address, uint32_t timeout_ms)
     }
 
     int ret = bdm_watchpoint_hit(address);
+    return ret;
+}
+
+bool bdm_wait_for_instruction_breakpoint(uint32_t address, uint32_t timeout_ms)
+{
+    absolute_time_t resume_deadline = make_timeout_time_us(1000);
+    absolute_time_t timeout_deadline = make_timeout_time_ms(timeout_ms);
+
+    // Allow FRZ to drop, but also accept a breakpoint hit too fast to observe.
+    while (gpio_get(BDM_FRZ)) {
+        if (time_reached(resume_deadline) || time_reached(timeout_deadline))
+            break;
+        tight_loop_contents();
+    }
+
+    while (!gpio_get(BDM_FRZ)) {
+        if (time_reached(timeout_deadline))
+            return false;
+
+        // Boot and decompression take seconds. Keep USB and boot logs moving.
+        tud_task();
+        vxw_uart_process();
+    }
+
+    int ret = bdm_instruction_breakpoint_hit(address);
     return ret;
 }
 
