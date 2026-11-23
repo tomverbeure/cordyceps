@@ -395,7 +395,7 @@ int boot_setup()
     if (!ret)
         goto fail;
 
-    ret = patch_sw_options(false, true, true, true); // VID, TMT, LIM, AAM
+    ret = patch_sw_options(true, true, true, true); // VID, TMT, LIM, AAM
     if (!ret)
         return false;
 
