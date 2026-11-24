@@ -8,6 +8,7 @@
 #include "rtc.h"
 #include "scpi_uart.h"
 #include "vxw_uart.h"
+#include "nvsram_emu.h"
 
 #define DEBUG_PB19  1
 #define DEBUG_CS7   1
@@ -446,6 +447,13 @@ int main(void)
                     break;
                 }
                 case 'p': {
+                    break;
+                }
+                case 'n': {
+                    bdm_halt_cpu();
+                    nvsram_emu_patch_cs();
+                    bdm_resume_cpu();
+                    break;
                 }
             }
         }
