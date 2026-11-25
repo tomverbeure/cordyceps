@@ -43,7 +43,11 @@ bool nvsram_emu_patch_cs()
 
     vxw_log("Enabling CS7...\n\r");
     error = "!!! Reprogramming CS7 failed";
-    ret = bdm_write_word(OR7, 0xFFFF8D24);
+    // Use 0xFFFF8DF4 instead of 0xFFFF8D24. 
+    // SCY=15:  Number of wait cycles 
+    // TRLX=1:  Timing relax -> double the number of wait states and increase setup and hold times for CS and OE/WE.
+    // So right now, we're lookig at 30 wait cycles or 150 CPU cycles to handle NVSRAM accesses.
+    ret =        bdm_write_word(OR7, 0xFFFF8DF4);
     ret = ret && bdm_write_word(BR7, 0x02800401);
     if (!ret)
         goto fail;
