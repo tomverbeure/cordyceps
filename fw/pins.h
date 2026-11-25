@@ -4,16 +4,15 @@
 //============================================================
 // MPC860 CPU bus
 //============================================================
-// These should have been defined as D7 to D0.
-// D15 is the LSB!!!
-#define D15             0
-#define D14             1
-#define D13             2
-#define D12             3
-#define D11             4
-#define D10             5
-#define D9              6
-#define D8              7
+// D0 is the most significant bit of the MPC860 byte lane.
+#define D0              0
+#define D1              1
+#define D2              2
+#define D3              3
+#define D4              4
+#define D5              5
+#define D6              6
+#define D7              7
 
 // A19 is the LSB!!!
 #define A19             8
