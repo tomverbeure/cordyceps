@@ -5,4 +5,5 @@ the faulty Dallas DS1742W, adds a fast SCPI serial port, makes
 the VxWorks console visible, enables all software options, and
 more, without needing open the scope or install special firmware.
 
+More information coming soon...
 
