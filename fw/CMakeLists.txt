@@ -51,6 +51,7 @@ add_executable(cordyceps
             vxw_uart.c
             ring_buf.c
             nvsram_emu.c
+            gdb.c
         )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
