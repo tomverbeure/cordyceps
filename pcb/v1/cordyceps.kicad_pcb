@@ -216,6 +216,12 @@
 		(path "/091e4593-14df-4abd-80cb-13bc07d42805")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "3" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -592,6 +598,12 @@
 		(path "/7afd4c8c-d8e6-42ae-8a10-2c05bbeecb20")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -744,6 +756,12 @@
 		(path "/496a80d6-4d02-41d3-b657-488c510c0fe1")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -896,6 +914,12 @@
 		(path "/eba27c69-292e-481d-9f7b-a3c6ab9c2132")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -1048,6 +1072,12 @@
 		(path "/be4fd377-3762-4b51-bda4-7fffe79b9a8a")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -1191,6 +1221,12 @@
 		(path "/ad98e2b6-12d1-48b5-af14-3cfbe13d0440")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -1601,6 +1637,12 @@
 		(path "/7787346c-5ade-475c-8919-e4069156f9b5")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -1745,6 +1787,12 @@
 		(path "/4ab63a9f-05c6-42f0-a0b9-c8607e064d5b")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(zone_connect 1)
 		(attr exclude_from_bom allow_soldermask_bridges)
 		(net_tie_pad_groups "1, 2")
@@ -2026,6 +2074,12 @@
 		(path "/33764b9b-7cc8-41ea-950c-03770a07600d")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "4" "2" "1" "3")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -2314,6 +2368,12 @@
 		(path "/f67e16ec-dced-405c-8268-7166efb9df19")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -2724,6 +2784,12 @@
 		(path "/385f5a8c-6c1e-40ab-bb22-c131db59c6c0")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -2876,6 +2942,12 @@
 		(path "/d7628357-c10d-4600-89f6-116d66b7278d")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -3028,6 +3100,12 @@
 		(path "/574e5e96-0cd2-43cb-8c98-00124722624e")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -3172,6 +3250,12 @@
 		(path "/cb53a09f-0ae3-4997-8f3d-879ae44ecd7c")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2" "3")
+			)
+		)
 		(zone_connect 1)
 		(attr exclude_from_bom allow_soldermask_bridges)
 		(net_tie_pad_groups "1, 2")
@@ -3396,6 +3480,12 @@
 		(path "/4ab81ffe-1110-426d-b4be-9e79ff7f5da6")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "3" "5" "7" "9" "2" "4" "6" "8" "10")
+			)
+		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -3920,6 +4010,12 @@
 		(path "/7d8fa3f5-7b5c-4498-ab7c-d644014b2172")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -4064,6 +4160,12 @@
 		(path "/3292ffa0-4593-4bd9-a2ac-56a80168169f")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(zone_connect 1)
 		(attr exclude_from_bom allow_soldermask_bridges)
 		(net_tie_pad_groups "1, 2")
@@ -4347,6 +4449,12 @@
 		(path "/e09f1c39-3283-4311-9998-2d134818f42d")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(zone_connect 1)
 		(attr exclude_from_bom allow_soldermask_bridges)
 		(net_tie_pad_groups "1, 2")
@@ -4638,6 +4746,12 @@
 		(path "/6c48244f-07e0-46fd-8be5-d8f314bfbef9")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2" "3" "4" "5" "6" "7" "8")
+			)
+		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -4931,6 +5045,12 @@
 		(path "/69eb67d4-15f5-4e08-9141-447e8a33b82e")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(zone_connect 1)
 		(attr exclude_from_bom allow_soldermask_bridges)
 		(net_tie_pad_groups "1, 2")
@@ -5214,6 +5334,12 @@
 		(path "/6893d834-c9da-43c2-9a17-5296e839e594")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -5327,6 +5453,12 @@
 		(path "/52fed456-2bbd-432c-b711-d4486cd0f713")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -5479,6 +5611,12 @@
 		(path "/50d420ae-9c2a-45d1-9a78-8a5afa5c2f9b")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd exclude_from_bom dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -5631,6 +5769,12 @@
 		(path "/4a2e7251-4813-45b8-b25c-cf4481ef4a97")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -5782,6 +5926,12 @@
 		(path "/f1659520-eda4-4e69-8766-602af6bb276c")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2" "3")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -6152,6 +6302,14 @@
 		(path "/70e38c25-ce02-49d4-8604-cf41ef287783")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "SH" "A1" "A12" "B1" "B12" "A4" "A9" "B4" "B9" "A5" "B5" "A7" "B7"
+					"A6" "B6" "A8" "B8"
+				)
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -6523,6 +6681,12 @@
 		(path "/b7326f56-abd0-4bfe-bf0a-be92e3da7fd8")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -6628,6 +6792,17 @@
 		(path "/1aeb0e34-a9a8-41c7-9f24-dc9c86373dd7")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "B6" "B8" "A5" "A4" "A2" "B2" "B1" "C2" "C1" "D2" "D1" "E2" "E1"
+					"F2" "F1" "G2" "G1" "H2" "H1" "J1" "J2" "K2" "J3" "K3" "J4" "K4" "J5"
+					"K5" "A8" "B3" "A1" "B7" "K1" "A10" "B4" "K10" "A7" "A6" "A3" "J6" "K6"
+					"J7" "K7" "J8" "K8" "K9" "J9" "J10" "H9" "H10" "G9" "G10" "F9" "F10"
+					"E9" "E10" "D9" "D10" "C9" "C10" "B10" "B9" "A9" "B5"
+				)
+			)
+		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -7521,6 +7696,12 @@
 		(path "/9d09e839-f43d-423c-a6db-7d9799b43a23")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2" "8" "4" "6" "5" "7" "3")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -7889,6 +8070,12 @@
 		(path "/a8bc05da-5ebf-416f-95eb-b5f480ca7708")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -8091,6 +8278,12 @@
 		(path "/4f147567-3d66-409b-81a5-f241351eec1b")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(zone_connect 1)
 		(attr exclude_from_bom allow_soldermask_bridges)
 		(net_tie_pad_groups "1, 2")
@@ -8361,6 +8554,12 @@
 		(path "/303ab5f4-a580-425f-b4c0-76d586f9d73e")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "4" "2" "1" "3")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -8658,6 +8857,12 @@
 		(path "/eb73f1c7-17f8-4a9d-8d62-66fbc2553f96")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -8802,6 +9007,12 @@
 		(path "/c3b33563-59e8-403d-970e-53f7c519a136")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(zone_connect 1)
 		(attr exclude_from_bom allow_soldermask_bridges)
 		(net_tie_pad_groups "1, 2")
@@ -9082,6 +9293,12 @@
 		(path "/d2046687-0481-494b-acca-68697ea2cf7f")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -9234,6 +9451,12 @@
 		(path "/9621982a-16bb-4c6d-b9da-788733c041a9")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -9386,6 +9609,12 @@
 		(path "/7a1f9e45-fcda-4aff-bd04-bc5745d32920")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -9530,6 +9759,12 @@
 		(path "/16abd132-9a05-4364-9531-00286c171bb4")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -9643,6 +9878,12 @@
 		(path "/c97a8c1f-dcf5-48dd-b13b-62819be0edb1")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -9795,6 +10036,12 @@
 		(path "/265b918e-dc8a-4699-90ad-f024afc68e92")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(attr exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
@@ -9900,6 +10147,12 @@
 		(path "/825b933e-e4e7-4905-8d08-28ad426b1507")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "4" "2" "1" "3")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -10197,6 +10450,12 @@
 		(path "/4ab1ae99-53c2-4ad6-82ea-dfbf15fd0b3f")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(attr exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
@@ -10312,6 +10571,12 @@
 		(path "/4332757f-c1d3-4ae9-94a5-2bc947a5b245")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "3" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -10688,6 +10953,12 @@
 		(path "/b8e225dc-8e88-40db-8fd0-5a6e193dc9ad")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -10832,6 +11103,12 @@
 		(path "/d69a3e71-024c-4ebe-a3ec-7a874233b905")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -10937,6 +11214,12 @@
 		(path "/a7a96e2f-e5de-4e3c-8a3e-cddb08a38b96")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -11050,6 +11333,12 @@
 		(path "/ddf8c408-132c-4866-a25b-1ecb85605ccb")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "3" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -11423,9 +11712,31 @@
 			)
 		)
 		(property ki_fp_filters "SSOP*3.9x4.9mm*P0.635mm* TSSOP*4.4x5mm*P0.65mm* TVSOP*4.4x3.6mm*P0.4mm* SOIC*3.9x9.9mm*P1.27mm*")
-		(path "/f136f90b-edb1-4796-ae65-66065b375cf1")
+		(path "/ff12f846-978e-413a-885e-1886299c1280")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "4" "2" "3")
+			)
+			(unit
+				(name "B")
+				(pins "7" "5" "6")
+			)
+			(unit
+				(name "C")
+				(pins "9" "11" "10")
+			)
+			(unit
+				(name "D")
+				(pins "12" "14" "13")
+			)
+			(unit
+				(name "E")
+				(pins "1" "15" "16" "8")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -11830,6 +12141,12 @@
 		(path "/4046cde7-631a-48f1-ac72-1cc9c410338f")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2" "3")
+			)
+		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -12378,6 +12695,12 @@
 		(path "/ea7c89ab-f68f-4e8b-8547-09812cc34bff")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -12522,6 +12845,12 @@
 		(path "/bedb4fbb-ee7f-4b63-88f3-d5a81699cb91")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -12627,6 +12956,12 @@
 		(path "/cbef11ac-0252-402b-90c5-bc37e636bdf8")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2" "3")
+			)
+		)
 		(zone_connect 1)
 		(attr exclude_from_bom allow_soldermask_bridges)
 		(net_tie_pad_groups "1, 2")
@@ -12851,6 +13186,12 @@
 		(path "/1f27968e-bfcf-41fd-a66a-9050d8e36196")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(attr exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
@@ -12958,6 +13299,12 @@
 		(path "/e29fa3c2-d5f2-4a7a-8520-c5e1e04205c5")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2" "3" "4" "5" "6" "7" "8" "10" "9" "SH")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -13774,7 +14121,13 @@
 		(path "/9c7e2c9b-41a3-4dff-8dc9-0336e2da4b2f")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
-		(attr smd)
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
+		(attr smd exclude_from_bom dnp)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start -0.237258 0.5225)
@@ -13925,6 +14278,12 @@
 		(path "/0b743161-e5d3-42ec-8b5c-662c87bdbcea")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2" "3")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -14331,6 +14690,12 @@
 		(path "/7f54a70f-884b-40d7-bcf3-d7d10824f673")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr through_hole)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -14827,6 +15192,12 @@
 		(path "/68c2aba4-e866-4b12-a68a-9353e271262f")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
@@ -14979,6 +15350,12 @@
 		(path "/e847fba8-9465-4ab3-b431-402f5606d5d9")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(attr exclude_from_bom)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
@@ -15086,6 +15463,12 @@
 		(path "/7d7c1019-b650-4da2-973e-1d58685dd48c")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1")
+			)
+		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_circle
 			(center 0 0)
@@ -15191,6 +15574,12 @@
 		(path "/44d1a854-4ad6-4eb9-8363-d2f340686ab1")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(zone_connect 1)
 		(attr exclude_from_bom allow_soldermask_bridges)
 		(net_tie_pad_groups "1, 2")
@@ -15530,6 +15919,20 @@
 		(path "/8225b674-d638-4640-93a7-c772be6bc6dd")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "2" "4" "6" "8" "10" "12" "14" "16" "18" "20" "22" "24" "26" "28"
+					"30" "32" "34" "36" "38" "40" "42" "44" "46" "48" "50" "52" "54" "56"
+					"58" "60" "62" "64" "66" "68" "70" "72" "74" "76" "78" "80" "82" "84"
+					"86" "88" "90" "92" "94" "96" "98" "100" "1" "3" "5" "7" "9" "11" "13"
+					"15" "17" "19" "21" "23" "25" "27" "29" "31" "33" "35" "37" "39" "41"
+					"43" "45" "47" "49" "51" "53" "55" "57" "59" "61" "63" "65" "67" "69"
+					"71" "73" "75" "77" "79" "81" "83" "85" "87" "89" "91" "93" "95" "97"
+					"99"
+				)
+			)
+		)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
 			(start 32.73 5)
@@ -15816,7 +16219,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D15")
-			(pinfunction "D0_2")
+			(pinfunction "D15_2")
 			(pintype "bidirectional+no_connect")
 			(uuid "53eb9760-1d7c-4c9e-873d-c1af609722be")
 		)
@@ -15834,7 +16237,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D14")
-			(pinfunction "D1_4")
+			(pinfunction "D14_4")
 			(pintype "bidirectional+no_connect")
 			(uuid "7e2f46a5-1371-42f3-98e2-5a990ed941c0")
 		)
@@ -15852,7 +16255,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D13")
-			(pinfunction "D2_6")
+			(pinfunction "D13_6")
 			(pintype "bidirectional+no_connect")
 			(uuid "7c487897-22ca-43da-80bc-020a19203af5")
 		)
@@ -15870,7 +16273,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D12")
-			(pinfunction "D3_8")
+			(pinfunction "D12_8")
 			(pintype "bidirectional+no_connect")
 			(uuid "659d07cf-71ed-461f-b24a-ff2e802b6324")
 		)
@@ -15906,7 +16309,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D11")
-			(pinfunction "D4_12")
+			(pinfunction "D11_12")
 			(pintype "bidirectional+no_connect")
 			(uuid "04d7a2de-f076-41d7-885f-bba10c7f940d")
 		)
@@ -15924,7 +16327,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D10")
-			(pinfunction "D5_14")
+			(pinfunction "D10_14")
 			(pintype "bidirectional+no_connect")
 			(uuid "e603197e-8d33-4784-acb7-098a2ecec3d5")
 		)
@@ -15942,7 +16345,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D9")
-			(pinfunction "D6_16")
+			(pinfunction "D9_16")
 			(pintype "bidirectional+no_connect")
 			(uuid "a53c3f06-92c6-44b6-8af7-4b38ed17d4a6")
 		)
@@ -15960,7 +16363,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D8")
-			(pinfunction "D7_18")
+			(pinfunction "D8_18")
 			(pintype "bidirectional+no_connect")
 			(uuid "3821a69f-0d91-4dc8-b951-7807866c5e85")
 		)
@@ -15996,7 +16399,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D7")
-			(pinfunction "D8_22")
+			(pinfunction "D7_22")
 			(pintype "bidirectional")
 			(uuid "b393353a-d2d3-4c6e-b3cc-c6d0ee863d9b")
 		)
@@ -16014,7 +16417,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D6")
-			(pinfunction "D9_24")
+			(pinfunction "D6_24")
 			(pintype "bidirectional")
 			(uuid "005045ba-5419-48a7-bf1c-4479a30faaca")
 		)
@@ -16032,7 +16435,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D5")
-			(pinfunction "D10_26")
+			(pinfunction "D5_26")
 			(pintype "bidirectional")
 			(uuid "c2dea2fd-49cf-40dd-b8a9-88291f7dd61a")
 		)
@@ -16050,7 +16453,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D4")
-			(pinfunction "D11_28")
+			(pinfunction "D4_28")
 			(pintype "bidirectional")
 			(uuid "4202074c-c21c-4d80-8914-465385f574cd")
 		)
@@ -16086,7 +16489,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D3")
-			(pinfunction "D12_32")
+			(pinfunction "D3_32")
 			(pintype "bidirectional")
 			(uuid "75f98d6b-fe6f-4380-9aec-c9f5180fc427")
 		)
@@ -16104,7 +16507,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D2")
-			(pinfunction "D13_34")
+			(pinfunction "D2_34")
 			(pintype "bidirectional")
 			(uuid "d3df7f8b-e30c-4cb7-b0e6-dcf1e8e19c29")
 		)
@@ -16122,7 +16525,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D1")
-			(pinfunction "D14_36")
+			(pinfunction "D1_36")
 			(pintype "bidirectional")
 			(uuid "f1c94acd-bbcc-4b43-8440-6bf97777e14f")
 		)
@@ -16140,7 +16543,7 @@
 			(size 0.56 4)
 			(layers "B.Cu" "B.Mask")
 			(net "/D0")
-			(pinfunction "D15_38")
+			(pinfunction "D0_38")
 			(pintype "bidirectional")
 			(uuid "188e3244-0491-4598-b1c3-94f7cd70ec61")
 		)
@@ -16770,6 +17173,12 @@
 		(path "/89f43d97-68c3-46d3-bcda-f4b4192ca956")
 		(sheetname "/")
 		(sheetfile "cordyceps.kicad_sch")
+		(units
+			(unit
+				(name "A")
+				(pins "1" "2")
+			)
+		)
 		(attr smd)
 		(duplicate_pad_numbers_are_jumpers no)
 		(fp_line
