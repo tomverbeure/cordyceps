@@ -80,8 +80,8 @@ target_compile_definitions(cordyceps PRIVATE
     # USB reset interface without a custom Windows driver
     PICO_USB_RESET_SUPPORT_MS_OS_20_DESCRIPTOR=1
 
-    # Two CDC ports occupy interfaces 0-3; the reset interface is interface 4.
-    PICO_USB_RESET_MS_OS_20_DESCRIPTOR_ITF=4
+    # Three CDC ports occupy interfaces 0-5. The reset interface is 6.
+    PICO_USB_RESET_MS_OS_20_DESCRIPTOR_ITF=6
 )
 
 pico_add_extra_outputs(cordyceps)

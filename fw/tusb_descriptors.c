@@ -9,7 +9,8 @@ enum {
     STR_IDX_SERIAL          = 3,
     STR_IDX_CDC_0_ITF       = 4,
     STR_IDX_CDC_1_ITF       = 5,
-    STR_IDX_VENDOR_RESET    = 6
+    STR_IDX_CDC_2_ITF       = 6,
+    STR_IDX_VENDOR_RESET    = 7
 };
 
 tusb_desc_device_t const desc_device = {
@@ -40,7 +41,9 @@ enum {
     ITF_NUM_CDC_0_DATA      = 1,
     ITF_NUM_CDC_1           = 2,
     ITF_NUM_CDC_1_DATA      = 3,
-    ITF_NUM_VENDOR_RESET    = 4,
+    ITF_NUM_CDC_2           = 4,
+    ITF_NUM_CDC_3_DATA      = 5,
+    ITF_NUM_VENDOR_RESET    = 6,
     ITF_NUM_TOTAL
 };
 
@@ -52,7 +55,11 @@ enum {
 #define EPNUM_CDC_1_OUT     0x04
 #define EPNUM_CDC_1_IN      0x84
 
-#define CONFIG_TOTAL_LEN    (TUD_CONFIG_DESC_LEN + 2 * TUD_CDC_DESC_LEN + TUD_RPI_RESET_DESC_LEN)
+#define EPNUM_CDC_2_NOTIF   0x85
+#define EPNUM_CDC_2_OUT     0x06
+#define EPNUM_CDC_2_IN      0x86
+
+#define CONFIG_TOTAL_LEN    (TUD_CONFIG_DESC_LEN + 3 * TUD_CDC_DESC_LEN + TUD_RPI_RESET_DESC_LEN)
 
 _Static_assert(ITF_NUM_VENDOR_RESET == PICO_USB_RESET_MS_OS_20_DESCRIPTOR_ITF,
                "Reset interface must match the Microsoft OS descriptor");
@@ -61,10 +68,13 @@ uint8_t const desc_configuration[] = {
     TUD_CONFIG_DESCRIPTOR(1, ITF_NUM_TOTAL, 0, CONFIG_TOTAL_LEN, 0x00, 100),
 
     // CDC Port 0 (e.g., /dev/ttyACM0 or first COM port)
-    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC_0, 4, EPNUM_CDC_0_NOTIF, 8, EPNUM_CDC_0_OUT, EPNUM_CDC_0_IN, 64),
+    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC_0, STR_IDX_CDC_0_ITF, EPNUM_CDC_0_NOTIF, 8, EPNUM_CDC_0_OUT, EPNUM_CDC_0_IN, 64),
 
     // CDC Port 1 (e.g., /dev/ttyACM1 or second COM port)
-    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC_1, 5, EPNUM_CDC_1_NOTIF, 8, EPNUM_CDC_1_OUT, EPNUM_CDC_1_IN, 64),
+    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC_1, STR_IDX_CDC_1_ITF, EPNUM_CDC_1_NOTIF, 8, EPNUM_CDC_1_OUT, EPNUM_CDC_1_IN, 64),
+
+    // CDC Port 2 (e.g., /dev/ttyACM2 or third COM port)
+    TUD_CDC_DESCRIPTOR(ITF_NUM_CDC_2, STR_IDX_CDC_2_ITF, EPNUM_CDC_2_NOTIF, 8, EPNUM_CDC_2_OUT, EPNUM_CDC_2_IN, 64),
 
     TUD_RPI_RESET_DESCRIPTOR(ITF_NUM_VENDOR_RESET, STR_IDX_VENDOR_RESET),
 };
@@ -87,6 +97,7 @@ char const *string_desc_arr[] = {
     [STR_IDX_SERIAL]        = usbd_serial_str,
     [STR_IDX_CDC_0_ITF]     = "SCPI serial port",
     [STR_IDX_CDC_1_ITF]     = "VXW serial port",
+    [STR_IDX_CDC_2_ITF]     = "GDB serial port",
     [STR_IDX_VENDOR_RESET]  = "Reset",
 };
 

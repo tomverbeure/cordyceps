@@ -16,7 +16,10 @@
 #define CFG_TUSB_RHPORT0_MODE       (OPT_MODE_DEVICE | OPT_MODE_FULL_SPEED)
 
 // Number of active CDC ports
-#define CFG_TUD_CDC                 2
+// 0: SCPI serial
+// 1: VxWorks console
+// 2: GDB backend
+#define CFG_TUD_CDC                 3
 
 // TX and RX buffer sizes per port
 //
